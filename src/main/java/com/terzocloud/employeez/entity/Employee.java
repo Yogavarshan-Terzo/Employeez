@@ -1,15 +1,14 @@
 package com.terzocloud.employeez.entity;
 
-import jakarta.annotation.Nonnull;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.antlr.v4.runtime.misc.NotNull;
 
-import java.time.LocalDateTime;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 @Getter
@@ -26,8 +25,8 @@ public class Employee {
     private String lastname;
     @Column(nullable = false)
     private String email;
-    private Date dateOfBirth;
-    private Date joinedOn;
+    private LocalDate dateOfBirth;
+    private LocalDate joinedOn;
     private String designation;
     private String address;
     @Column(nullable = false)
@@ -35,6 +34,16 @@ public class Employee {
     @Column(nullable = false)
     private Long mobile;
     private String photoUrl;
+    private int sick;
+    private int paternity;
+    private int earned;
+    @OneToMany
+    @JsonBackReference
+    private List<Leave> leaves;
+    @ManyToOne
+    @JsonBackReference
+    private Department department;
+    private int reportTo;
     @ManyToMany(targetEntity = Role.class,fetch = FetchType.EAGER)
     @JoinTable(
             joinColumns = {@JoinColumn(referencedColumnName = "id")},

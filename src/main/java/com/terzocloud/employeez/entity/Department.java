@@ -1,5 +1,6 @@
 package com.terzocloud.employeez.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -18,8 +19,7 @@ public class Department {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String name;
-    @OneToOne
-    private Employee manager;
     @OneToMany(cascade = CascadeType.REMOVE)
+    @JsonManagedReference
     private List<Employee> employees;
 }
