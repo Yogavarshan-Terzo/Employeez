@@ -35,12 +35,12 @@ public class CustomExceptionHandler {
         errorResponse.setTimestamp(System.currentTimeMillis());
         return new ResponseEntity<>(errorResponse,HttpStatus.NOT_FOUND);
     }
-    @ExceptionHandler
-    public ResponseEntity<ErrorResponse> exceptionHandler(Exception exp){
-        ErrorResponse employeeErrorResponse = new ErrorResponse();
-        employeeErrorResponse.setStatus(HttpStatus.BAD_REQUEST.value());
-        employeeErrorResponse.setMessage("Employee not found");
-        employeeErrorResponse.setTimestamp(System.currentTimeMillis());
-        return new ResponseEntity<>(employeeErrorResponse,HttpStatus.NOT_FOUND);
-    }
+//    @ExceptionHandler
+//    public ResponseEntity<ErrorResponse> exceptionHandler(Exception exp){
+//        ErrorResponse employeeErrorResponse = new ErrorResponse();
+//        employeeErrorResponse.setStatus(HttpStatus.BAD_REQUEST.value());
+//        employeeErrorResponse.setMessage("Employee not found");
+//        employeeErrorResponse.setTimestamp(System.currentTimeMillis());
+//        return new ResponseEntity<>(employeeErrorResponse,HttpStatus.NOT_FOUND);
+//    }
 }

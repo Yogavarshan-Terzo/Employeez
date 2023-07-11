@@ -25,6 +25,7 @@ public class EmployeeRestController {
         List<EmployeeDto> employees = employeeService.findAll();
         return employees;
     }
+
     //find employee by id
     @GetMapping("/employees/{employeeId}")
     public EmployeeDto findEmployeeById(@PathVariable Integer employeeId){

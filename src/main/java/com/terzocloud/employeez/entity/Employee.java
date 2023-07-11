@@ -34,15 +34,15 @@ public class Employee {
     @Column(nullable = false)
     private Long mobile;
     private String photoUrl;
-    private int sick;
-    private int paternity;
-    private int earned;
+    @OneToOne
+    private LeaveInfo leaveInfo;
     @OneToMany
     @JsonBackReference
     private List<Leave> leaves;
     @ManyToOne
     @JsonBackReference
     private Department department;
+    @Column(nullable = true)
     private int reportTo;
     @ManyToMany(targetEntity = Role.class,fetch = FetchType.EAGER)
     @JoinTable(
