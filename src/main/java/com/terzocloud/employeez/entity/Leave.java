@@ -23,8 +23,9 @@ public class Leave {
     private LocalDate endDate;
     private String type;
     private String note;
-    private Boolean isApplied;
+    private Boolean isApproved;
     @ManyToOne
     @JoinColumn(name = "employee_id")
+    @JsonBackReference
     private Employee employee;
 }

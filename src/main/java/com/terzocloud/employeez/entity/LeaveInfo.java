@@ -1,8 +1,6 @@
 package com.terzocloud.employeez.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,10 +13,15 @@ import lombok.Setter;
 @Entity
 public class LeaveInfo {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private int sick;
     private int earned;
     private int paternity;
-    @OneToOne(mappedBy = "leaveInfo")
-    private Employee employee;
+
+    public LeaveInfo(int sick, int earned, int paternity) {
+        this.sick = sick;
+        this.earned = earned;
+        this.paternity = paternity;
+    }
 }

@@ -3,10 +3,7 @@ package com.terzocloud.employeez.entity;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -15,6 +12,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @Entity
 public class Employee {
     @Id
@@ -36,19 +34,21 @@ public class Employee {
     private String photoUrl;
     @OneToOne
     private LeaveInfo leaveInfo;
-    @OneToMany
-    @JsonBackReference
+    @OneToMany(mappedBy = "employee")
+    @JsonManagedReference
     private List<Leave> leaves;
     @ManyToOne
+    @JoinColumn(name = "department_id")
     @JsonBackReference
     private Department department;
-    @Column(nullable = true)
+    @Column
     private int reportTo;
-    @ManyToMany(targetEntity = Role.class,fetch = FetchType.EAGER)
-    @JoinTable(
-            joinColumns = {@JoinColumn(referencedColumnName = "id")},
-            inverseJoinColumns = {@JoinColumn(referencedColumnName = "id")}
-    )
-    private List<Role> roles;
-
+    @ManyToOne
+    @JoinColumn(name = "role_id")
+    @JsonBackReference
+    Role role;
+    @ManyToOne
+    @JoinColumn(name = "team_id")
+    @JsonBackReference
+    private Team team;
 }

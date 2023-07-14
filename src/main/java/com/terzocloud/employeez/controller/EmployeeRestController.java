@@ -1,15 +1,17 @@
 package com.terzocloud.employeez.controller;
 
-import com.terzocloud.employeez.dto.EmployeeDto;
+import com.terzocloud.employeez.dto.*;
 import com.terzocloud.employeez.entity.Department;
 import com.terzocloud.employeez.entity.Employee;
 import com.terzocloud.employeez.service.EmployeeService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
+@CrossOrigin("*")
 public class EmployeeRestController {
 
     //declare employeeService
@@ -20,7 +22,7 @@ public class EmployeeRestController {
         this.employeeService = employeeService;
     }
     //list all employees
-    @GetMapping("/employees")
+    @GetMapping("/employees/all")
     public List<EmployeeDto> findAllEmployees(){
         List<EmployeeDto> employees = employeeService.findAll();
         return employees;
@@ -34,13 +36,19 @@ public class EmployeeRestController {
     }
     //add an Employee
     @PostMapping("/employees")
-    public Employee addEmployee(@RequestBody Employee employee){
-        return employeeService.save(employee);
+    public Employee addEmployee(@RequestBody RegisterDto registerDto){
+        System.out.println("hfhm");
+        return employeeService.save(registerDto);
     }
     //update an Employee
     @PutMapping("/employees")
-    public EmployeeDto updateEmployee(@RequestBody Employee employee){
-        return employeeService.update(employee);
+    public EmployeeDto updateEmployee(@RequestBody UpdateByEmployeeDto updateDto, HttpServletRequest request){
+        return employeeService.update(updateDto,request);
+    }
+
+    @PutMapping("/employees/edit")
+    public EmployeeDto editEmployee(@RequestBody UpdateEmployeeDto updateDto ){
+        return employeeService.updateEmployee(updateDto);
     }
     @DeleteMapping("/employees/{employeeId}")
     public void deleteEmployee(@PathVariable Integer employeeId){
@@ -50,5 +58,37 @@ public class EmployeeRestController {
     @GetMapping("/employees/dept/{employeeId}")
     public Department  findDepartment(@PathVariable Integer employeeId){
         return employeeService.findDepartment(employeeId);
+    }
+    @GetMapping("/employees/{searchQuery}/{offset}/{field}/{direction}")
+    public SearchDto searchEmployees(@PathVariable String searchQuery,
+                                             @PathVariable int offset,
+                                             @PathVariable String field,
+                                             @PathVariable String direction
+                                             ){
+        SearchDto searchDto = employeeService.searchEmployees(searchQuery,offset,field,direction);
+        return searchDto;
+    }
+    //for update
+    @GetMapping("/employees/edit/{employeeId}")
+    public UpdateEmployeeDto findEmployeeByIdForEdit(@PathVariable Integer employeeId){
+        UpdateEmployeeDto updateEmployeeDto = employeeService.findByIdForEdit(employeeId);
+        return updateEmployeeDto;
+    }
+
+    @GetMapping("/employees/{offset}/{field}/{direction}")
+    public List<EmployeeDto> findEmployeesWithPagination(@PathVariable int offset,
+                                                         @PathVariable String field,
+                                                         @PathVariable String direction){
+        List<EmployeeDto> employees = employeeService.findEmployeesWithPagination(offset, field,
+        direction);
+        return employees;
+    }
+
+    @GetMapping("/employees/count")
+    public int findEmployeesCount(HttpServletRequest request){
+        System.out.println("find Employees count method called");
+        int count = employeeService.findEmployeesCount();
+        System.out.println(count);
+        return count;
     }
 }

@@ -29,7 +29,7 @@ public class UserDetailsDto implements UserDetails {
     private List<Leave> leaves;
     private Department department;
     private int reportTo;
-    private List<Role> roles;
+    private Role role;
     private List<GrantedAuthority> authorities;
     private Boolean active;
 
@@ -48,15 +48,12 @@ public class UserDetailsDto implements UserDetails {
         this.leaveInfo = employee.getLeaveInfo();
         this.leaves = employee.getLeaves();
         this.department = employee.getDepartment();
-        this.roles = employee.getRoles();
-        List<GrantedAuthority> authoritiesList = new ArrayList<>();
-        authoritiesList = IntStream.range(0, roles.size())
-                .mapToObj(i -> roles.get(i).getName())
-                .map(SimpleGrantedAuthority::new)
-                .collect(Collectors.toList());
-        this.authorities = authoritiesList;
+        this.role = employee.getRole();
+        List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
+        this.role = employee.getRole();
+        authorities.add(new SimpleGrantedAuthority(role.getName()));
+        this.authorities=authorities;
         this.active = true;
-
     }
 
     @Override

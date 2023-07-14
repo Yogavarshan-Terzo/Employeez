@@ -4,6 +4,7 @@ import com.terzocloud.employeez.service.UserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -47,14 +48,18 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
         http.csrf().disable();
+        http.cors();
         http.authorizeHttpRequests(authorize ->
                 {
                     try {
                         authorize
                                 .requestMatchers("/login")
                                 .permitAll()
-                                .anyRequest()
-                                .authenticated()
+                                .requestMatchers(HttpMethod.GET,"/employees","/employees/**").permitAll()
+                                .requestMatchers(HttpMethod.POST,"/employees").hasRole("ADMIN")
+                                .requestMatchers(HttpMethod.PUT,"/employees").hasAnyRole("EMPLOYEE")
+                                .requestMatchers(HttpMethod.PUT,"/employees/edit").hasAnyRole("ADMIN","MANAGER")
+                                .requestMatchers(HttpMethod.POST,"/employees/search","/employees/all").hasAnyRole("EMPLOYEE","MANAGER","ADMIN")
                                 .and()
                                 .sessionManagement()
                                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
