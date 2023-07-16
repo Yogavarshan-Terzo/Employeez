@@ -1,9 +1,9 @@
 package com.terzocloud.employeez.mapper;
 
-import com.terzocloud.employeez.dto.EmployeeDto;
-import com.terzocloud.employeez.dto.RegisterDto;
-import com.terzocloud.employeez.dto.UpdateEmployeeDto;
+import com.terzocloud.employeez.dto.*;
 import com.terzocloud.employeez.entity.Employee;
+
+import java.time.LocalDate;
 
 public class EmployeeMapper {
     public static EmployeeDto mapToEmployeeDto(Employee employee){
@@ -76,5 +76,44 @@ public class EmployeeMapper {
                 .teamId(employee.getTeam().getId())
                 .build();
         return updateDto;
+    }
+    public static EmployeeDto mapDateOfBirth(EmployeeDto employeeDto){
+        String dateOfBirth = employeeDto.getDateOfBirth().toString();
+        int currentYear = LocalDate.now().getYear();
+        int birthYear = Integer.parseInt(dateOfBirth.substring(0, 4));
+        int month = Integer.parseInt(dateOfBirth.substring(5, 7));
+        int day = Integer.parseInt(dateOfBirth.substring(8, 10));
+        employeeDto.setDateOfBirth(LocalDate.of(currentYear, month, day));
+        return employeeDto;
+    }
+
+    public static ProfileDto mapToProfileDto(Employee employee, Employee manager){
+        ProfileDto profileDto = ProfileDto.builder()
+                .id(employee.getId())
+                .firstname(employee.getFirstname())
+                .lastname(employee.getLastname())
+                .email(employee.getEmail())
+                .department(employee.getDepartment().getName())
+                .designation(employee.getDesignation())
+                .photoUrl(employee.getPhotoUrl())
+                .mobile(employee.getMobile())
+                .managerId(manager.getId())
+                .managerDesignation(manager.getDesignation())
+                .managerName(manager.getFirstname())
+                .build();
+        return profileDto;
+    }
+    public static ProfileDto mapToProfileDto(Employee employee){
+        ProfileDto profileDto = ProfileDto.builder()
+                .id(employee.getId())
+                .firstname(employee.getFirstname())
+                .lastname(employee.getLastname())
+                .email(employee.getEmail())
+                .department(employee.getDepartment().getName())
+                .designation(employee.getDesignation())
+                .photoUrl(employee.getPhotoUrl())
+                .mobile(employee.getMobile())
+                .build();
+        return profileDto;
     }
 }

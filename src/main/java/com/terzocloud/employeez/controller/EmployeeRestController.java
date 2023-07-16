@@ -91,4 +91,31 @@ public class EmployeeRestController {
         System.out.println(count);
         return count;
     }
+
+    //dashboard details
+    @GetMapping("/dashboard")
+    public DashboardDto getDashboardDetails(HttpServletRequest request){
+        DashboardDto dashboardDto = employeeService.getDashboardDetails(request);
+        return dashboardDto;
+    }
+    //managers
+    @GetMapping("/managers")
+    public List<EmployeeDto> getManagers(){
+        List<EmployeeDto> managers = employeeService.findAllManagers();
+        return managers;
+    }
+
+
+    //ProfileDto
+    @GetMapping("/profileDto")
+    public ProfileDto getProfileDto(HttpServletRequest request){
+        ProfileDto profileDto = employeeService.getProfileDto(request);
+        return profileDto;
+    }
+
+    @GetMapping("/employees/profileDetails")
+    public EmployeeDto getProfileDetails(HttpServletRequest request){
+        EmployeeDto employeeDto = employeeService.findEmployeeForUpdate(request);
+        return employeeDto;
+    }
 }

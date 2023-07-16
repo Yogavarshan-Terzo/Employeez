@@ -30,4 +30,12 @@ public interface EmployeeService {
     List<EmployeeDto> findEmployeesWithPagination(int offset, String field, String direction);
 
     int findEmployeesCount();
+
+    DashboardDto getDashboardDetails(HttpServletRequest request);
+
+    List<EmployeeDto> findAllManagers();
+
+    ProfileDto getProfileDto(HttpServletRequest request);
+
+    EmployeeDto findEmployeeForUpdate(HttpServletRequest request);
 }

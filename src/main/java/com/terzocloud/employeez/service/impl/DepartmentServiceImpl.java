@@ -1,5 +1,6 @@
 package com.terzocloud.employeez.service.impl;
 
+import com.terzocloud.employeez.dto.DepartmentDto;
 import com.terzocloud.employeez.dto.EmployeeDto;
 import com.terzocloud.employeez.entity.Department;
 import com.terzocloud.employeez.entity.Employee;
@@ -14,6 +15,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static com.terzocloud.employeez.mapper.DepartmentMapper.mapToDepartmentDto;
 import static com.terzocloud.employeez.mapper.EmployeeMapper.mapToEmployeeDto;
 
 @Service
@@ -26,8 +28,10 @@ public class DepartmentServiceImpl implements DepartmentService {
 
 
     @Override
-    public List<Department> findAll() {
-        return departmentRepository.findAll();
+    public List<DepartmentDto> findAll() {
+        return departmentRepository.findAll().stream()
+                .map(department -> mapToDepartmentDto(department))
+                .collect(Collectors.toList());
     }
 
     @Override

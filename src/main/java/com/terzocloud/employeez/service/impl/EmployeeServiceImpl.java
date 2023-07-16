@@ -33,7 +33,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     //declare repository
     private EmployeeRepository employeeRepository;
     private RoleRepository roleRepository;
-
+    private HolidayRepository holidayRepository;
     private PasswordEncoder passwordEncoder;
     private DepartmentRepository departmentRepository;
     private LeaveInfoRepository leaveInfoRepository;
@@ -47,7 +47,8 @@ public class EmployeeServiceImpl implements EmployeeService {
                                DepartmentRepository departmentRepository,
                                LeaveInfoRepository leaveInfoRepository,
                                TeamRepository teamRepository,
-                               JwtService jwtService) {
+                               JwtService jwtService,
+                               HolidayRepository holidayRepository) {
         this.employeeRepository = employeeRepository;
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
@@ -55,6 +56,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         this.leaveInfoRepository = leaveInfoRepository;
         this.teamRepository = teamRepository;
         this.jwtService = jwtService;
+        this.holidayRepository = holidayRepository;
     }
 
     @Override
@@ -85,6 +87,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         Role role = roleRepository.findById(registerDto.getRoleId()).get();
         employee.setRole(role);
         LeaveInfo leaveInfo = new LeaveInfo(12,12,15);
+        System.out.println(leaveInfoRepository.save(leaveInfo));
         employee.setLeaveInfo(leaveInfoRepository.save(leaveInfo));
         employee.setPassword(passwordEncoder.encode(employee.getPassword()));
         employee.setDepartment(departmentRepository.findById(registerDto.getDeptId()).get());
@@ -106,7 +109,10 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public void delete(Integer employeeId) {
+        Employee employee = employeeRepository.findById(employeeId).get();
+        Long leaveInfoId = employee.getLeaveInfo().getId();
         employeeRepository.deleteById(employeeId);
+        leaveInfoRepository.deleteById(leaveInfoId);
     }
 
     @Override
@@ -169,5 +175,55 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public int findEmployeesCount() {
         return (int) employeeRepository.count();
+    }
+
+    @Override
+    public DashboardDto getDashboardDetails(HttpServletRequest request) {
+        String jwt = request.getHeader("Authorization").substring(7);
+        String email = jwtService.extractUsername(jwt);
+        Employee employee = employeeRepository.findByEmail(email);
+        DashboardDto dashboardDto = new DashboardDto();
+        dashboardDto.setFirstname(employee.getFirstname());
+        dashboardDto.setLeaveInfo(employee.getLeaveInfo());
+        dashboardDto.setHolidays(holidayRepository.findAll().stream().limit(4).toList());
+        dashboardDto.setBirthdayBuddies(employeeRepository.getEmployeeByBirthday(Sort.by("dateOfBirth")).stream()
+                .map(employee1 -> mapToEmployeeDto(employee1))
+                .map(employee1 -> mapDateOfBirth(employee1))
+                .collect(Collectors.toList()));
+        return dashboardDto;
+    }
+
+    @Override
+    public List<EmployeeDto> findAllManagers() {
+        List<Employee> employees = employeeRepository.findByRole(roleRepository.findById(2).get());
+        List<EmployeeDto> employeeDtos = employees.stream()
+                .map(employee -> mapToEmployeeDto(employee))
+                .collect(Collectors.toList());
+        return employeeDtos;
+    }
+
+    @Override
+    public ProfileDto getProfileDto(HttpServletRequest request) {
+        String jwt = request.getHeader("Authorization").substring(7);
+        String email = jwtService.extractUsername(jwt);
+        Employee employee = employeeRepository.findByEmail(email);
+        ProfileDto profileDto;
+        if(employee.getReportTo() != 0) {
+            Employee manager = employeeRepository.findById(employee.getReportTo()).get();
+           profileDto = mapToProfileDto(employee, manager);
+        }else {
+            profileDto = mapToProfileDto(employee);
+        }
+        return profileDto;
+    }
+
+    @Override
+    public EmployeeDto findEmployeeForUpdate(HttpServletRequest request) {
+        String jwt = request.getHeader("Authorization").substring(7);
+        String email = jwtService.extractUsername(jwt);
+        Employee employee = employeeRepository.findByEmail(email);
+        EmployeeDto employeeDto =  mapToEmployeeDto(employee);
+        System.out.println(employeeDto.toString());
+        return employeeDto;
     }
 }
