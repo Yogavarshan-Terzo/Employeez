@@ -19,8 +19,7 @@ public class Leave {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private LocalDate startDate;
-    private LocalDate endDate;
+    private LocalDate applyOn;
     private String type;
     private String note;
     private Boolean isApproved;

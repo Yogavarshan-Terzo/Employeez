@@ -19,7 +19,11 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.chrono.ChronoLocalDate;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -183,6 +187,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         String email = jwtService.extractUsername(jwt);
         Employee employee = employeeRepository.findByEmail(email);
         DashboardDto dashboardDto = new DashboardDto();
+        dashboardDto.setEmployeeId(employee.getId());
         dashboardDto.setFirstname(employee.getFirstname());
         dashboardDto.setLeaveInfo(employee.getLeaveInfo());
         dashboardDto.setHolidays(holidayRepository.findAll().stream().limit(4).toList());
@@ -190,6 +195,8 @@ public class EmployeeServiceImpl implements EmployeeService {
                 .map(employee1 -> mapToEmployeeDto(employee1))
                 .map(employee1 -> mapDateOfBirth(employee1))
                 .collect(Collectors.toList()));
+        dashboardDto.setUpcomingTimeOff(employee.getLeaves().stream()
+                .filter(leave -> leave.getApplyOn().isAfter(ChronoLocalDate.from(LocalDateTime.now()))).collect(Collectors.toList()));
         return dashboardDto;
     }
 

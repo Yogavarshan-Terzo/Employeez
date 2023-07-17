@@ -17,6 +17,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import static org.springframework.security.authorization.AuthorityReactiveAuthorizationManager.hasAnyRole;
+
 @Configuration
 @EnableWebSecurity
 @SuppressWarnings("removal")
@@ -53,14 +55,15 @@ public class SecurityConfig {
                 {
                     try {
                         authorize
-                                .requestMatchers("/login")
-                                .permitAll()
+                                .requestMatchers("/login").permitAll()
                                 .requestMatchers(HttpMethod.GET,"/employees","/employees/**").permitAll()
+                                .requestMatchers(HttpMethod.GET,"/employees/leave/approve/**").hasAnyRole("ADMIN","MANAGER")
                                 .requestMatchers(HttpMethod.POST,"/employees").hasRole("ADMIN")
                                 .requestMatchers(HttpMethod.DELETE,"/employees/**").hasRole("ADMIN")
                                 .requestMatchers(HttpMethod.GET,"/managers").hasRole("ADMIN")
                                 .requestMatchers(HttpMethod.PUT,"/employees").hasAnyRole("EMPLOYEE")
                                 .requestMatchers(HttpMethod.PUT,"/employees/edit").hasAnyRole("ADMIN","MANAGER")
+                                .requestMatchers(HttpMethod.POST,"/employees/apply-leave").hasAnyRole("EMPLOYEE","MANAGER","ADMIN")
                                 .requestMatchers(HttpMethod.POST,"/employees/search","/employees/all").hasAnyRole("EMPLOYEE","MANAGER","ADMIN")
                                 .requestMatchers(HttpMethod.GET,"/dashboard","/department/**","/teams/**","/profileDto").hasAnyRole("EMPLOYEE","MANAGER","ADMIN")
                                 .and()
